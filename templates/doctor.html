@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PainTrack – Doctor Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Doctor Dashboard</h2>
+
+    <!-- Chart -->
+    <canvas id="painChart" height="120"></canvas>
+
+    <!-- Logs Table -->
+    <table>
+      <tr>
+        <th>Time</th>
+        <th>Patient</th>
+        <th>Pain</th>
+        <th>Type</th>
+        <th>Location</th>
+        <th>Notes</th>
+        <th>Status</th>
+      </tr>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ log.user_id }}</td>
+        <td>{{ log.pain_level }}</td>
+        <td>{{ log.pain_type }}</td>
+        <td>{{ log.pain_location }}</td>
+        <td>{{ log.notes or '' }}</td>
+        <td>
+          {% if log.pain_level >= 7 %}
+            <span class="alert">⚠️ High Pain</span>
+          {% else %}
+            Stable
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <p class="muted"><a href="{{ url_for('logout') }}">Logout</a></p>
+  </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    // Build chart data from server-rendered logs
+    const labels = [
+      {% for log in logs %}'{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}',{% endfor %}
+    ];
+    const data = [
+      {% for log in logs %}{{ log.pain_level }},{% endfor %}
+    ];
+
+    const canvas = document.getElementById('painChart');
+    // Only draw the chart if there is at least one data point
+    if (canvas && labels.length > 0 && data.length > 0) {
+      const ctx = canvas.getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Pain Level Over Time',
+            data,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          scales: { y: { min: 0, max: 10 } }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

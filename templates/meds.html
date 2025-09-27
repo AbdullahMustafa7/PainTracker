@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PainTrack - Meds Check</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h2>Did you take your medicines today?</h2>
+
+    <div class="actions">
+      <button onclick="window.location.href='{{ url_for(patient) }}'">Yes</button>
+      <button onclick="document.getElementById('meds-list').style.display='block'">No</button>
+    </div>
+
+    <div id="meds-list" style="display:none; margin-top:20px;">
+      <h3>Your Medication Plan</h3>
+      <ul>
+        {% for m in meds %}
+          <li>
+            <strong>{{ m.med_name }}</strong> — {{ m.dose }}
+            {% if m.time_of_day %} ({{ m.time_of_day }}){% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      <p class="hint">
+        Please take your medicines as prescribed. After that, you can proceed to log pain.
+      </p>
+
+      <!-- this was truncated before; now it's correct -->
+      <button onclick="window.location.href='{{ url_for(patient) }}'">
+        Go to Pain Logging
+      </button>
+    </div>
+
+    <p class="muted"><a href="{{ url_for('logout') }}">Logout</a></p>
+  </div>
+</body>
+</html>

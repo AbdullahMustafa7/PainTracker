@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PainTrack – Patient</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<div class="container">
+<h2>Log Your Pain</h2>
+<form method="POST">
+<label>Pain Level (0–10)</label>
+<input type="number" name="pain" min="0" max="10" value="3" required />
+
+
+<label>Type of Pain</label>
+<select name="pain_type">
+<option>Sharp</option>
+<option>Dull</option>
+<option>Burning</option>
+<option>Throbbing</option>
+</select>
+
+
+<label>Location of Pain</label>
+<select name="pain_location">
+<option>Head</option>
+<option>Chest</option>
+<option>Stomach</option>
+<option>Back</option>
+<option>Legs</option>
+</select>
+
+
+<label>Notes (optional)</label>
+<input type="text" name="notes" placeholder="e.g., after medication" />
+
+
+<button type="submit">Submit</button>
+</form>
+
+
+{% if logs %}
+<h3 style="margin-top:28px;">Your Last 10 Logs</h3>
+<table>
+<tr>
+<th>Time</th>
+<th>Pain</th>
+<th>Type</th>
+<th>Location</th>
+<th>Notes</th>
+</tr>
+{% for log in logs %}
+<tr>
+<td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+<td>{{ log.pain_level }}</td>
+<td>{{ log.pain_type }}</td>
+<td>{{ log.pain_location }}</td>
+<td>{{ log.notes or '' }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+
+<p class="muted"><a href="{{ url_for('logout') }}">Logout</a></p>
+</div>
+</body>
+</html>
